@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { InternalAxiosRequestConfig } from "axios";
 import queryString from "query-string";
 
 const localHostUrl = "http://127.0.0.1:8080/";
@@ -14,14 +14,18 @@ const publicClient = axios.create({
   },
 });
 
-publicClient.interceptors.request.use(async (config) => {
-  return {
-    ...config,
-    Headers: {
-      "Content-Type": "application/json",
-    },
-  };
-});
+publicClient.interceptors.request.use(
+  (cfg: InternalAxiosRequestConfig) => {
+    cfg.headers = cfg.headers || {};
+
+    cfg.headers["Content-Type"] = "application/json";
+
+    return cfg;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 publicClient.interceptors.response.use(
   (response) => {
