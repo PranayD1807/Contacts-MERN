@@ -1,7 +1,10 @@
 import { createOne, updateOne, getAll, getOne, deleteOne } from "./handlerFactory.js";
 import contactModel from "../models/contact.model.js";
 
-export const createContact = createOne(contactModel);
+export const createContact = (req, res, next) => {
+    req.body.user = req.user.id;
+    return createOne(contactModel)(req, res, next);
+};
 
 export const updateContact = (req, res, next) => {
     const userFilter = { user: req.user.id };

@@ -1,10 +1,11 @@
 import ContactGrid from "@/components/ContactGrid";
-import { Flex, Input, Spinner, IconButton } from "@chakra-ui/react";
+import { Flex, Input, Spinner, IconButton, Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import contactApi from "@/api/modules/contacts.api";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { IoPersonAddSharp, IoSearch } from "react-icons/io5";
+import AddContactDialog from "@/components/AddContactDialog";
 
 interface Contact {
   _id: string;
@@ -23,14 +24,35 @@ const Dashboard = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleAddContact = () => {
-    // Logic to handle adding a contact
-    console.log("Add Contact clicked");
-  };
-
   const handleContactSearch = () => {
     // Logic to handle contact search, if any specific action is needed
     console.log("Search clicked", searchTerm);
+  };
+
+  const handleSaveContact = async (values: {
+    name: string;
+    email: string;
+    phone: string;
+  }) => {
+    const contactData = {
+      contactName: values.name,
+      mobileNumber: values.phone,
+      email: values.email,
+    };
+
+    try {
+      const res = await contactApi.create(contactData);
+
+      if (res.status === "error") {
+        toast.error(res.err?.message || "Something went wrong");
+      } else if (res.status === "success") {
+        setContacts((prevContacts) => [...prevContacts, res.data] as Contact[]);
+        toast.success("Contact added successfully!");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
   };
 
   useEffect(() => {
@@ -63,18 +85,23 @@ const Dashboard = () => {
   }
 
   return (
-    <Flex direction="column" p={4} alignItems="center" gap={10}>
+    <Flex direction="column" p={4} alignItems="center" gap={6} w="100%" mt={4}>
       {/* Search and Add Contact Section */}
       <Flex
         direction={{ base: "column", md: "row" }}
         justify="space-between"
         align="center"
         mb={4}
-        gapY={4}
-        width={{ base: "80%", sm: "70%", lg: "50%" }}
+        width={{ base: "85%", sm: "70%", md: "60%" }}
+        gapY={2}
       >
         {/* Search Input */}
-        <Flex width="100%" align="center">
+        <Flex
+          direction="row"
+          width={{ base: "100%", md: "70%" }}
+          align="center"
+          mb={{ base: 4, md: 0 }}
+        >
           <Input
             placeholder="Search..."
             value={searchTerm}
@@ -93,14 +120,13 @@ const Dashboard = () => {
         </Flex>
 
         {/* Add Contact Button */}
-        <Button
-          colorScheme="teal"
-          onClick={handleAddContact}
-          ml={{ base: 0, md: 4 }}
-          width={{ base: "100%", md: "30%" }}
-        >
-          <IoPersonAddSharp /> Add Contact
-        </Button>
+        <Box width={{ base: "100%", md: "30%" }} ml={{ base: 0, md: 4 }}>
+          <AddContactDialog onSave={handleSaveContact}>
+            <Button colorScheme="teal" width="100%">
+              <IoPersonAddSharp /> Add Contact
+            </Button>
+          </AddContactDialog>
+        </Box>
       </Flex>
 
       {/* Contact Grid */}

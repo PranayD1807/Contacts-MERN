@@ -1,8 +1,8 @@
 import React from "react";
-import { Grid, Box, Text, IconButton } from "@chakra-ui/react";
+import { Grid, Box, Text, IconButton, Flex } from "@chakra-ui/react";
 import { Avatar } from "./ui/avatar"; // Assuming you have a custom Avatar component
 
-import { MdOutlineDelete } from "react-icons/md";
+import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 interface Contact {
   _id: string;
   contactName: string;
@@ -25,10 +25,10 @@ const ContactGrid: React.FC<ContactGridProps> = ({ contacts }) => {
       templateColumns={{
         base: "repeat(1, 1fr)",
         sm: "repeat(2, 1fr)",
-        md: "repeat(3, 1fr)",
+        md: "repeat(2, 1fr)",
         lg: "repeat(4, 1fr)",
       }}
-      gap={4}
+      gap={5}
       p={4}
     >
       {contacts.map((contact) => (
@@ -39,38 +39,69 @@ const ContactGrid: React.FC<ContactGridProps> = ({ contacts }) => {
           p={4}
           boxShadow="md"
           display="flex"
-          flexDirection="column"
+          flexDirection="row"
+          justifyContent="space-between"
         >
-          <Box display="flex" alignItems="center" mb={2}>
-            {/* Avatar */}
-            <Avatar name={contact.contactName} src={getRandomImage()} mr={4} />
-            {/* Name and mobile number */}
-            <Box flexGrow={1}>
-              <Text fontSize="lg" fontWeight="medium" maxLines={1}>
-                {contact.contactName}
-              </Text>
-              {contact.mobileNumber && (
-                <Text color="gray.500" maxLines={1} textOverflow="ellipsis">
-                  {contact.mobileNumber}
+          <Box pr={4}>
+            <Box display="flex" alignItems="center">
+              {/* Avatar */}
+              <Avatar
+                name={contact.contactName}
+                src={getRandomImage()}
+                mr={3}
+              />
+              {/* Name and mobile number */}
+              <Box flexGrow={1}>
+                <Text fontSize="sm" fontWeight="medium" maxLines={1}>
+                  {contact.contactName}
                 </Text>
-              )}
+                {contact.mobileNumber && (
+                  <Text
+                    fontSize="xs"
+                    color="gray.500"
+                    maxLines={1}
+                    textOverflow="ellipsis"
+                  >
+                    {contact.mobileNumber}
+                  </Text>
+                )}
+              </Box>
             </Box>
+
+            {contact.email && (
+              <Text
+                color="gray.500"
+                mt={2}
+                maxLines={1}
+                textOverflow="ellipsis"
+                fontSize="sm"
+              >
+                Email: {contact.email}
+              </Text>
+            )}
+          </Box>
+          <Flex direction="column" gap={2}>
+            {/* Edit button */}
+            <IconButton
+              aria-label="Delete"
+              key="delete"
+              variant="subtle"
+              rounded="full"
+              size="xs"
+            >
+              <MdOutlineEdit />
+            </IconButton>
             {/* delete button */}
             <IconButton
               aria-label="Delete"
               key="delete"
               variant="subtle"
               rounded="full"
+              size="xs"
             >
               <MdOutlineDelete />
             </IconButton>
-          </Box>
-
-          {contact.email && (
-            <Text color="gray.500" mt={2} maxLines={1} textOverflow="ellipsis">
-              Email: {contact.email}
-            </Text>
-          )}
+          </Flex>
         </Box>
       ))}
     </Grid>
