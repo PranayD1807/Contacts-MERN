@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface UserState {
   isLoggedIn: boolean;
@@ -14,6 +14,18 @@ const initialState: UserState = {
   userId: null,
 };
 
+const persistedUser = localStorage.getItem("user");
+const userFromStorage = persistedUser ? JSON.parse(persistedUser) : null;
+
+const initialStateFromStorage = userFromStorage
+  ? {
+      isLoggedIn: true,
+      displayName: userFromStorage.displayName,
+      email: userFromStorage.email,
+      userId: userFromStorage.userId,
+    }
+  : initialState;
+
 interface LoginPayload {
   displayName: string;
   email: string;
@@ -21,17 +33,28 @@ interface LoginPayload {
 }
 
 const userSlice = createSlice({
-  name: 'user',
-  initialState,
+  name: "user",
+  initialState: initialStateFromStorage,
   reducers: {
     login: (state, action: PayloadAction<LoginPayload>) => {
       state.isLoggedIn = true;
       state.displayName = action.payload.displayName;
       state.email = action.payload.email;
       state.userId = action.payload.userId;
+
+      // Save to localStorage
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          displayName: action.payload.displayName,
+          email: action.payload.email,
+          userId: action.payload.userId,
+        })
+      );
     },
     logout: (state) => {
-      Object.assign(state, initialState); // Resets to initialState
+      Object.assign(state, initialState);
+      localStorage.removeItem("user");
     },
   },
 });

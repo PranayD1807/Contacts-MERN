@@ -17,6 +17,10 @@ import {
 import { Field } from "@/components/ui/field";
 import React, { useState } from "react";
 import { Formik, Field as FormikField, FormikHelpers } from "formik";
+import userApi from "@/api/modules/user.api";
+import { useDispatch } from "react-redux";
+import { login } from "@/store/userSlice";
+import { toast } from "react-toastify";
 
 // Password Strength function (all factors required)
 const calculatePasswordStrength = (password: string): number => {
@@ -76,19 +80,40 @@ const validate = (values: { email: string; password: string }) => {
   return errors;
 };
 
-// Submit function
-const onSubmit = (
-  values: { email: string; password: string },
-  actions: FormikHelpers<{ email: string; password: string }>
-) => {
-  console.log(values);
-  actions.setSubmitting(false);
-};
-
 const LoginForm: React.FC<{ toggleAuthMode: () => void }> = ({
   toggleAuthMode,
 }) => {
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const dispatch = useDispatch();
+
+  const onSubmit = async (
+    values: { email: string; password: string },
+    actions: FormikHelpers<{ email: string; password: string }>
+  ) => {
+    actions.setSubmitting(true);
+    try {
+      const res = await userApi.signin(values);
+      if (res.err) {
+        toast.error(res.err.message);
+      } else if (res.response) {
+        const userData = res.response.data;
+        dispatch(
+          login({
+            displayName: userData.data.displayName,
+            email: userData.data.email,
+            userId: userData.data.id,
+          })
+        );
+        localStorage.setItem("actkn", userData.token);
+        toast.success(res.response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    } finally {
+      actions.setSubmitting(false);
+    }
+  };
 
   // Handle password strength calculation
   const handlePasswordChange = (password: string) => {

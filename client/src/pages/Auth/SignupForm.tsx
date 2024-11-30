@@ -17,6 +17,10 @@ import {
 } from "@/components/ui/password-input";
 import { Field } from "@/components/ui/field";
 import { Formik, Field as FormikField, FormikHelpers } from "formik";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import userApi from "@/api/modules/user.api";
+import { login } from "@/store/userSlice";
 
 // Password Strength function
 const calculatePasswordStrength = (password: string): number => {
@@ -33,7 +37,7 @@ const calculatePasswordStrength = (password: string): number => {
 // Validation function
 const validate = (values: {
   email: string;
-  username: string;
+  displayName: string;
   password: string;
   confirmPassword: string;
 }) => {
@@ -52,7 +56,7 @@ const validate = (values: {
   }
 
   // Username Validation
-  if (!values.username) {
+  if (!values.displayName) {
     errors.username = "Username is required";
   }
 
@@ -85,30 +89,53 @@ const validate = (values: {
   return errors;
 };
 
-// Submit function
-const onSubmit = (
-  values: {
-    email: string;
-    username: string;
-    password: string;
-    confirmPassword: string;
-  },
-  actions: FormikHelpers<{
-    email: string;
-    username: string;
-    password: string;
-    confirmPassword: string;
-  }>
-) => {
-  console.log(values);
-  actions.setSubmitting(false);
-};
-
 const SignupForm: React.FC<{ toggleAuthMode: () => void }> = ({
   toggleAuthMode,
 }) => {
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const dispatch = useDispatch();
 
+  // Submit function
+  const onSubmit = async (
+    values: {
+      email: string;
+      displayName: string;
+      password: string;
+      confirmPassword: string;
+    },
+    actions: FormikHelpers<{
+      email: string;
+      displayName: string;
+      password: string;
+      confirmPassword: string;
+    }>
+  ) => {
+    actions.setSubmitting(true);
+    try {
+      const res = await userApi.signup(values);
+      if (res.err) {
+        toast.error(res.err.message);
+      } else if (res.response) {
+        const userData = res.response.data;
+        console.log(res.response);
+        dispatch(
+          login({
+            displayName: userData.data.displayName,
+            email: userData.data.email,
+            userId: userData.data.id,
+          })
+        );
+        localStorage.setItem("actkn", userData.token);
+
+        toast.success(res.response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    } finally {
+      actions.setSubmitting(false);
+    }
+  };
   // Handle password strength calculation
   const handlePasswordChange = (password: string) => {
     setPasswordStrength(calculatePasswordStrength(password));
@@ -135,7 +162,7 @@ const SignupForm: React.FC<{ toggleAuthMode: () => void }> = ({
         <Formik
           initialValues={{
             email: "",
-            username: "",
+            displayName: "",
             password: "",
             confirmPassword: "",
           }}
@@ -154,16 +181,16 @@ const SignupForm: React.FC<{ toggleAuthMode: () => void }> = ({
                   <Field
                     label="Username"
                     required
-                    errorText={errors.username}
-                    invalid={touched.username && !!errors.username}
+                    errorText={errors.displayName}
+                    invalid={touched.displayName && !!errors.displayName}
                   >
                     <FormikField
-                      name="username"
+                      name="displayName"
                       as={Input}
-                      placeholder="Your username"
+                      placeholder="Your Name"
                       variant="outline"
                       onChange={handleChange}
-                      value={values.username}
+                      value={values.displayName}
                     />
                   </Field>
 

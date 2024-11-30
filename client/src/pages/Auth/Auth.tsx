@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const Auth = () => {
   // authMode : LOGIN || SIGNUP
@@ -9,6 +12,15 @@ const Auth = () => {
   const toggleAuthMode = () => {
     setAuthMode((prevMode) => (prevMode === "LOGIN" ? "SIGNUP" : "LOGIN"));
   };
+
+  const navigate = useNavigate();
+  const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <>
