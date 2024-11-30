@@ -98,7 +98,7 @@ const AddContactDialog: React.FC<AddContactDialogProps> = ({
                       <FormikField
                         name="name"
                         as={Input}
-                        placeholder="John Doe"
+                        placeholder="Full Name"
                         variant="outline"
                         onChange={handleChange}
                         value={values.name}

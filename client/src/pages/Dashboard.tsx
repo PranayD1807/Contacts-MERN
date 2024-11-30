@@ -8,7 +8,7 @@ import { IoPersonAddSharp, IoSearch } from "react-icons/io5";
 import AddContactDialog from "@/components/AddContactDialog";
 
 interface Contact {
-  _id: string;
+  id: string;
   contactName: string;
   mobileNumber?: string;
   email?: string;
@@ -27,6 +27,22 @@ const Dashboard = () => {
   const handleContactSearch = () => {
     // Logic to handle contact search, if any specific action is needed
     console.log("Search clicked", searchTerm);
+  };
+
+  const handleDelete = async (contactId: string) => {
+    try {
+      const res = await contactApi.delete(contactId);
+      if (res.err) {
+        toast.error(res.err.message);
+      } else {
+        setContacts((prevContacts) =>
+          prevContacts.filter((contact) => contact.id !== contactId)
+        );
+        toast.success("Contact deleted successfully!");
+      }
+    } catch (error) {
+      console.error("Failed to delete contact", error);
+    }
   };
 
   const handleSaveContact = async (values: {
@@ -130,7 +146,7 @@ const Dashboard = () => {
       </Flex>
 
       {/* Contact Grid */}
-      <ContactGrid contacts={contacts} />
+      <ContactGrid contacts={contacts} handleDelete={handleDelete} />
     </Flex>
   );
 };

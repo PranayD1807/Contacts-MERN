@@ -3,8 +3,9 @@ import { Grid, Box, Text, IconButton, Flex } from "@chakra-ui/react";
 import { Avatar } from "./ui/avatar"; // Assuming you have a custom Avatar component
 
 import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
+import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 interface Contact {
-  _id: string;
+  id: string;
   contactName: string;
   mobileNumber?: string;
   email?: string;
@@ -12,6 +13,7 @@ interface Contact {
 
 interface ContactGridProps {
   contacts: Contact[];
+  handleDelete: (contactId: string) => Promise<void>;
 }
 
 // Function to generate random profile pictures
@@ -19,7 +21,10 @@ const getRandomImage = (): string => {
   return `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70) + 1}`;
 };
 
-const ContactGrid: React.FC<ContactGridProps> = ({ contacts }) => {
+const ContactGrid: React.FC<ContactGridProps> = ({
+  contacts,
+  handleDelete,
+}) => {
   return (
     <Grid
       templateColumns={{
@@ -33,7 +38,7 @@ const ContactGrid: React.FC<ContactGridProps> = ({ contacts }) => {
     >
       {contacts.map((contact) => (
         <Box
-          key={contact._id}
+          key={contact.id}
           border="1px"
           borderRadius="md"
           p={4}
@@ -92,15 +97,20 @@ const ContactGrid: React.FC<ContactGridProps> = ({ contacts }) => {
               <MdOutlineEdit />
             </IconButton>
             {/* delete button */}
-            <IconButton
-              aria-label="Delete"
-              key="delete"
-              variant="subtle"
-              rounded="full"
-              size="xs"
+            <DeleteConfirmationDialog
+              onDelete={() => handleDelete(contact.id)}
+              itemName={contact.contactName}
             >
-              <MdOutlineDelete />
-            </IconButton>
+              <IconButton
+                aria-label="Delete"
+                key="delete"
+                variant="subtle"
+                rounded="full"
+                size="xs"
+              >
+                <MdOutlineDelete />
+              </IconButton>
+            </DeleteConfirmationDialog>
           </Flex>
         </Box>
       ))}

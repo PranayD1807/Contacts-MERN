@@ -16,7 +16,7 @@ interface ContactData {
 }
 
 interface ContactResponse {
-  _id: string;
+  id: string;
   contactName: string;
   mobileNumber?: string;
   email?: string;
