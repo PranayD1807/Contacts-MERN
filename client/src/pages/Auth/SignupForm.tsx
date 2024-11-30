@@ -4,13 +4,13 @@ import {
   Flex,
   VStack,
   Text,
-  Button,
   Input,
   Heading,
   useBreakpointValue,
   Grid,
-  Separator, // Using Grid instead of HStack
+  Separator,
 } from "@chakra-ui/react";
+import { Button } from "@/components/ui/button";
 import {
   PasswordInput,
   PasswordStrengthMeter,
@@ -169,7 +169,14 @@ const SignupForm: React.FC<{ toggleAuthMode: () => void }> = ({
           validate={validate} // using the extracted validate function
           onSubmit={onSubmit} // using the extracted onSubmit function
         >
-          {({ handleSubmit, values, errors, touched, handleChange }) => (
+          {({
+            handleSubmit,
+            values,
+            errors,
+            touched,
+            handleChange,
+            isSubmitting,
+          }) => (
             <form style={{ width: "100%" }} onSubmit={handleSubmit}>
               <VStack gap="20px" align="stretch">
                 {/* Grid layout for Username, Email, Password, and Confirm Password */}
@@ -260,6 +267,8 @@ const SignupForm: React.FC<{ toggleAuthMode: () => void }> = ({
                   colorScheme="blue"
                   type="submit"
                   width="full"
+                  loading={isSubmitting}
+                  loadingText="Signing up..."
                   disabled={passwordStrength < 5}
                 >
                   Sign Up
