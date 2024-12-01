@@ -126,7 +126,7 @@ const LoginForm: React.FC<{ toggleAuthMode: () => void }> = ({
   const showImage = useBreakpointValue({ base: false, md: true }); // Show on md and larger screens
 
   return (
-    <Flex align="center" justify="center" h="80vh">
+    <Flex align="center" justify="center" mt={10}>
       <Box
         display="flex"
         flexDirection={{ base: "column", md: "row" }} // Stack vertically on small screens, row on larger

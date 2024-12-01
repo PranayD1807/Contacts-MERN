@@ -142,10 +142,10 @@ const SignupForm: React.FC<{ toggleAuthMode: () => void }> = ({
   };
 
   return (
-    <Flex align="center" justify="center" h="80vh">
+    <Flex align="center" justify="center" mt={10}>
       <Box
         display="flex"
-        flexDirection="column" // Stack vertically by default
+        flexDirection="column" 
         p={8}
         gap={4}
         rounded="md"
