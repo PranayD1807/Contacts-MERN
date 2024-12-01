@@ -2,9 +2,9 @@ import catchAsync from "./../utils/catchAsync.js";
 import AppError from "./../utils/appError.js";
 import APIFeatures from "./../utils/apiFeatures.js";
 
-export function deleteOne(Model, userFilter = {}) {
+export function deleteOne(Model, preFilter = {}) {
     return catchAsync(async (req, res, next) => {
-        const doc = await Model.findByIdAndDelete({ _id: req.params.id, ...userFilter });
+        const doc = await Model.findByIdAndDelete({ _id: req.params.id, ...preFilter });
 
         if (!doc) {
             return next(new AppError("No document found with that ID", 404));
@@ -17,10 +17,10 @@ export function deleteOne(Model, userFilter = {}) {
     });
 }
 
-export function updateOne(Model, userFilter = {}) {
+export function updateOne(Model, preFilter = {}) {
     return catchAsync(async (req, res, next) => {
         const doc = await Model.findByIdAndUpdate(
-            { _id: req.params.id, ...userFilter },
+            { _id: req.params.id, ...preFilter },
             req.body, {
             new: true,
             runValidators: true,
@@ -48,9 +48,9 @@ export function createOne(Model) {
     });
 }
 
-export function getOne(Model, popOptions, userFilter = {}) {
+export function getOne(Model, popOptions, preFilter = {}) {
     return catchAsync(async (req, res, next) => {
-        let query = Model.findOne({ _id: req.params.id, ...userFilter });
+        let query = Model.findOne({ _id: req.params.id, ...preFilter });
         if (popOptions) query = query.populate(popOptions);
         const doc = await query;
 
@@ -65,9 +65,9 @@ export function getOne(Model, popOptions, userFilter = {}) {
     });
 }
 
-export function getAll(Model, userFilter = {}) {
+export function getAll(Model, preFilter = {}) {
     return catchAsync(async (req, res, next) => {
-        const features = new APIFeatures(Model.find(userFilter), req.query)
+        const features = new APIFeatures(Model.find(preFilter), req.query)
             .filter()
             .sort()
             .limitFields()
