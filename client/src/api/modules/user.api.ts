@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { AxiosResponse } from "axios";
 import privateClient from "../client/private.client";
 import publicClient from "../client/public.client";
 
@@ -29,7 +27,7 @@ interface PasswordUpdateData {
 }
 
 interface ApiResponse<T> {
-  response?: AxiosResponse<T>;
+  data?: T;
   err?: {
     message: string;
     status?: string;
@@ -71,24 +69,11 @@ const userApi = {
     email,
     password,
   }: SigninData): Promise<ApiResponse<SigninResponse>> => {
-    try {
-      const response = await publicClient.post<SigninResponse>(
-        userEndpoints.signin,
-        {
-          email,
-          password,
-        }
-      );
-      return { response };
-    } catch (err: any) {
-      console.error(err);
-      return {
-        err: {
-          message: err.message || "Something went wrong",
-          status: err.status,
-        },
-      };
-    }
+    const response = await publicClient.post<SigninResponse>(
+      userEndpoints.signin,
+      { email, password }
+    );
+    return response;
   },
 
   signup: async ({
@@ -97,42 +82,23 @@ const userApi = {
     confirmPassword,
     displayName,
   }: SignupData): Promise<ApiResponse<SignupResponse>> => {
-    try {
-      const response = await publicClient.post<SignupResponse>(
-        userEndpoints.signup,
-        {
-          email,
-          password,
-          confirmPassword,
-          displayName,
-        }
-      );
-      return { response };
-    } catch (err: any) {
-      console.error(err);
-      return {
-        err: {
-          message: err.message || "Something went wrong",
-          status: err.status,
-        },
-      };
-    }
+    const response = await publicClient.post<SignupResponse>(
+      userEndpoints.signup,
+      {
+        email,
+        password,
+        confirmPassword,
+        displayName,
+      }
+    );
+    return response;
   },
 
   getInfo: async (): Promise<ApiResponse<GetInfoResponse>> => {
-    try {
-      const response = await privateClient.get<GetInfoResponse>(
-        userEndpoints.getInfo
-      );
-      return { response };
-    } catch (err: any) {
-      return {
-        err: {
-          message: err.message || "Something went wrong",
-          status: err.status,
-        },
-      };
-    }
+    const response = await privateClient.get<GetInfoResponse>(
+      userEndpoints.getInfo
+    );
+    return response;
   },
 
   passwordUpdate: async ({
@@ -140,24 +106,15 @@ const userApi = {
     newPassword,
     confirmNewPassword,
   }: PasswordUpdateData): Promise<ApiResponse<PasswordUpdateResponse>> => {
-    try {
-      const response = await privateClient.put<PasswordUpdateResponse>(
-        userEndpoints.passwordUpdate,
-        {
-          password,
-          newPassword,
-          confirmNewPassword,
-        }
-      );
-      return { response };
-    } catch (err: any) {
-      return {
-        err: {
-          message: err.message || "Something went wrong",
-          status: err.status,
-        },
-      };
-    }
+    const response = await privateClient.put<PasswordUpdateResponse>(
+      userEndpoints.passwordUpdate,
+      {
+        password,
+        newPassword,
+        confirmNewPassword,
+      }
+    );
+    return response;
   },
 };
 

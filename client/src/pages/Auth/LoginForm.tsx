@@ -97,17 +97,17 @@ const LoginForm: React.FC<{ toggleAuthMode: () => void }> = ({
       const res = await userApi.signin(values);
       if (res.err) {
         toast.error(res.err.message);
-      } else if (res.response) {
-        const userData = res.response.data;
+      } else if (res.data) {
+        const userData = res.data.data;
         dispatch(
           login({
-            displayName: userData.data.displayName,
-            email: userData.data.email,
-            userId: userData.data.id,
+            displayName: userData.displayName,
+            email: userData.email,
+            userId: userData.id,
           })
         );
-        localStorage.setItem("actkn", userData.token);
-        toast.success(res.response.data.message);
+        localStorage.setItem("actkn", res.data.token);
+        toast.success(res.data.message);
       }
     } catch (error) {
       console.log(error);

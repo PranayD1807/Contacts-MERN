@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import privateClient from "../client/private.client";
 
 const contactEndpoints = {
@@ -36,137 +35,65 @@ interface ApiResponse<T> {
 
 const contactApi = {
   getAll: async (query?: string): Promise<ApiResponse<ContactResponse[]>> => {
-    try {
-      const endpoint = contactEndpoints.getAll(query);
-      const response = await privateClient.get<{
-        status: string;
-        results: number;
-        data: ContactResponse[];
-      }>(endpoint);
+    const endpoint = contactEndpoints.getAll(query);
+    const response = await privateClient.get(endpoint);
 
-      return {
-        status: response.data.status,
-        results: response.data.results,
-        data: response.data.data,
-      };
-    } catch (err: any) {
-      console.error(err);
-      return {
-        status: "error",
-        data: [],
-        err: {
-          message: err.message || "Something went wrong",
-          status: err.status,
-        },
-      };
-    }
+    return {
+      status: response.data.status,
+      results: response.data.results,
+      data: response.data.data,
+    };
   },
 
   get: async (id: string): Promise<ApiResponse<ContactResponse | null>> => {
-    try {
-      const response = await privateClient.get<{
-        status: string;
-        results: number;
-        data: ContactResponse;
-      }>(contactEndpoints.get.replace("{id}", id));
+    const response = await privateClient.get(
+      contactEndpoints.get.replace("{id}", id)
+    );
 
-      return {
-        status: response.data.status,
-        data: response.data.data,
-      };
-    } catch (err: any) {
-      console.error(err);
-      return {
-        status: "error",
-        data: null,
-        err: {
-          message: err.message || "Something went wrong",
-          status: err.status,
-        },
-      };
-    }
+    return {
+      status: response.data.status,
+      data: response.data.data,
+    };
   },
 
   create: async (
     contactData: ContactData
   ): Promise<ApiResponse<ContactResponse | null>> => {
-    try {
-      const response = await privateClient.post<{
-        status: string;
-        results: number;
-        data: ContactResponse;
-      }>(contactEndpoints.create, contactData);
+    const response = await privateClient.post(
+      contactEndpoints.create,
+      contactData
+    );
 
-      // Return single object as `data`
-      return {
-        status: response.data.status,
-        data: response.data.data,
-      };
-    } catch (err: any) {
-      console.error(err);
-      return {
-        status: "error",
-        data: null,
-        err: {
-          message: err.message || "Something went wrong",
-          status: err.status,
-        },
-      };
-    }
+    return {
+      status: response.data.status,
+      data: response.data.data,
+    };
   },
 
   update: async (
     id: string,
     contactData: ContactData
   ): Promise<ApiResponse<ContactResponse | null>> => {
-    try {
-      const response = await privateClient.patch<{
-        status: string;
-        results: number;
-        data: ContactResponse;
-      }>(contactEndpoints.update.replace("{id}", id), contactData);
+    const response = await privateClient.patch(
+      contactEndpoints.update.replace("{id}", id),
+      contactData
+    );
 
-      // Return single object as `data`
-      return {
-        status: response.data.status,
-        data: response.data.data,
-      };
-    } catch (err: any) {
-      console.error(err);
-      return {
-        status: "error",
-        data: null,
-        err: {
-          message: err.message || "Something went wrong",
-          status: err.status,
-        },
-      };
-    }
+    return {
+      status: response.data.status,
+      data: response.data.data,
+    };
   },
 
   delete: async (id: string): Promise<ApiResponse<null>> => {
-    try {
-      const response = await privateClient.delete<{
-        status: string;
-        results: number;
-        data: null;
-      }>(contactEndpoints.delete.replace("{id}", id));
+    const response = await privateClient.delete(
+      contactEndpoints.delete.replace("{id}", id)
+    );
 
-      return {
-        status: response.data.status,
-        data: null, // `data` will be `null` for delete
-      };
-    } catch (err: any) {
-      console.error(err);
-      return {
-        status: "error",
-        data: null,
-        err: {
-          message: err.message || "Something went wrong",
-          status: err.status,
-        },
-      };
-    }
+    return {
+      status: response?.data?.status || "success",
+      data: response?.data,
+    };
   },
 };
 
