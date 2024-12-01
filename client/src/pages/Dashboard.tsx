@@ -1,6 +1,6 @@
+import React, { useEffect, useState } from "react";
 import ContactGrid from "@/components/ContactGrid";
 import { Flex, Input, Spinner, IconButton, Box } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import contactApi from "@/api/modules/contacts.api";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
@@ -24,9 +24,26 @@ const Dashboard = () => {
     setSearchTerm(e.target.value);
   };
 
+  const fetchData = async (query: string = "") => {
+    setLoading(true);
+    try {
+      const res = await contactApi.getAll(query);
+
+      if (res.status === "error") {
+        toast.error(res.err?.message || "Something went wrong");
+      } else if (res.status === "success" && res.data) {
+        setContacts(res.data);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleContactSearch = () => {
-    // Logic to handle contact search, if any specific action is needed
-    console.log("Search clicked", searchTerm);
+    fetchData(searchTerm); // Fetch contacts based on the search term
   };
 
   const handleDelete = async (contactId: string) => {
@@ -106,33 +123,10 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await contactApi.getAll();
-
-        if (res.status === "error") {
-          toast.error(res.err?.message || "Something went wrong");
-        } else if (res.status === "success" && res.data) {
-          setContacts(res.data);
-        }
-      } catch (error) {
-        console.log(error);
-        toast.error("Something went wrong");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return (
-      <Flex justify="center" align="center" height="100vh">
-        <Spinner size="xl" />
-      </Flex>
-    );
-  }
+    if (searchTerm === "") {
+      fetchData();
+    }
+  }, [searchTerm]);
 
   return (
     <Flex direction="column" p={4} alignItems="center" gap={6} w="100%" mt={4}>
@@ -178,13 +172,19 @@ const Dashboard = () => {
           </ContactDialog>
         </Box>
       </Flex>
-
       {/* Contact Grid */}
-      <ContactGrid
-        contacts={contacts}
-        handleDeleteContact={handleDelete}
-        handleUpdateContact={handleUpdateContact}
-      />
+      {loading && (
+        <Flex justify="center" align="center" height="60vh">
+          <Spinner size="xl" />
+        </Flex>
+      )}
+      {!loading && (
+        <ContactGrid
+          contacts={contacts}
+          handleDeleteContact={handleDelete}
+          handleUpdateContact={handleUpdateContact}
+        />
+      )}
     </Flex>
   );
 };

@@ -2,7 +2,8 @@
 import privateClient from "../client/private.client";
 
 const contactEndpoints = {
-  getAll: "contacts",
+  getAll: (query?: string) =>
+    query ? `contacts?query=${encodeURIComponent(query)}` : "contacts",
   get: "contacts/{id}",
   create: "contacts",
   update: "contacts/{id}",
@@ -34,15 +35,15 @@ interface ApiResponse<T> {
 }
 
 const contactApi = {
-  getAll: async (): Promise<ApiResponse<ContactResponse[]>> => {
+  getAll: async (query?: string): Promise<ApiResponse<ContactResponse[]>> => {
     try {
+      const endpoint = contactEndpoints.getAll(query);
       const response = await privateClient.get<{
         status: string;
         results: number;
         data: ContactResponse[];
-      }>(contactEndpoints.getAll);
+      }>(endpoint);
 
-      // Only return `results` for `getAll` (when `data` is an array)
       return {
         status: response.data.status,
         results: response.data.results,

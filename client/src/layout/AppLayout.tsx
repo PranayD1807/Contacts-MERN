@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
 import React from "react";
-import { chakra } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
@@ -14,9 +14,9 @@ const AppLayout = () => {
         theme="dark"
         toastClassName="text-sm"
       />
-      <chakra.body>
+      <Box>
         <Outlet />
-      </chakra.body>
+      </Box>
     </React.Fragment>
   );
 };
