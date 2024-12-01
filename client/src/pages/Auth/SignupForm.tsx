@@ -265,10 +265,12 @@ const SignupForm: React.FC<{ toggleAuthMode: () => void }> = ({
                 <Button
                   colorScheme="blue"
                   type="submit"
-                  width="full"
+                  width={{ base: "100%", md: "80%", lg: "60%" }}
                   loading={isSubmitting}
                   loadingText="Signing up..."
                   disabled={passwordStrength < 5}
+                  margin="auto"
+                  marginTop={4}
                 >
                   Sign Up
                 </Button>

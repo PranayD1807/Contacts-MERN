@@ -11,6 +11,7 @@ import AppLayout from "./layout/AppLayout";
 import Auth from "./pages/Auth/Auth";
 import Dashboard from "./pages/Dashboard";
 import { RootState } from "./store/store";
+import NotFound from "./pages/NotFound";
 
 interface PrivateRouteProps {
   // Expect a JSX element as a component
@@ -29,7 +30,7 @@ const ProtectedRoute = ({ component }: PrivateRouteProps) => {
 // router and routes
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<AppLayout />}>
+    <Route path="/" element={<AppLayout />} errorElement={<NotFound />}>
       <Route index element={<ProtectedRoute component={<Dashboard />} />} />
       <Route path="auth" element={<Auth />} />
     </Route>
