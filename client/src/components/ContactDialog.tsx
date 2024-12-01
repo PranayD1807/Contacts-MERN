@@ -41,14 +41,24 @@ const validateContact = (values: {
 
 interface AddContactDialogProps {
   children: ReactNode;
-  onSave: (values: { name: string; email: string; phone: string }) => void; // Accept onSave as a prop
+  onSave: (values: { name: string; email: string; phone: string }) => void;
+  initialValues?: Partial<{ name: string; email: string; phone: string }>;
+  title?: string;
 }
 
-const AddContactDialog: React.FC<AddContactDialogProps> = ({
+const ContactDialog: React.FC<AddContactDialogProps> = ({
   children,
   onSave,
+  initialValues = {},
+  title = "Add Contact",
 }) => {
   const [open, setOpen] = useState(false);
+
+  const formattedInitialValues = {
+    name: initialValues.name || "",
+    email: initialValues.email || "",
+    phone: initialValues.phone || "",
+  };
 
   return (
     <HStack wrap="wrap" gap="4">
@@ -62,15 +72,11 @@ const AddContactDialog: React.FC<AddContactDialogProps> = ({
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Contact</DialogTitle>
+            <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <Formik
-              initialValues={{
-                name: "",
-                email: "",
-                phone: "",
-              }}
+              initialValues={formattedInitialValues}
               validate={validateContact}
               onSubmit={async (values, actions) => {
                 onSave(values);
@@ -159,4 +165,4 @@ const AddContactDialog: React.FC<AddContactDialogProps> = ({
   );
 };
 
-export default AddContactDialog;
+export default ContactDialog;

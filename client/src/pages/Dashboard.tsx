@@ -5,7 +5,7 @@ import contactApi from "@/api/modules/contacts.api";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { IoPersonAddSharp, IoSearch } from "react-icons/io5";
-import AddContactDialog from "@/components/AddContactDialog";
+import ContactDialog from "@/components/ContactDialog";
 
 interface Contact {
   id: string;
@@ -64,6 +64,40 @@ const Dashboard = () => {
       } else if (res.status === "success") {
         setContacts((prevContacts) => [...prevContacts, res.data] as Contact[]);
         toast.success("Contact added successfully!");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  };
+
+  const handleUpdateContact = async (values: {
+    name: string;
+    email: string;
+    phone: string;
+    contactId: string;
+  }) => {
+    const { contactId, name, phone, email } = values;
+    const contactData = {
+      contactName: name,
+      mobileNumber: phone,
+      email: email,
+    };
+
+    try {
+      const res = await contactApi.update(contactId, contactData);
+
+      if (res.status === "error") {
+        toast.error(res.err?.message || "Something went wrong");
+      } else if (res.status === "success") {
+        setContacts(
+          (prevContacts) =>
+            prevContacts.map((contact) =>
+              contact.id === contactId ? res.data : contact
+            ) as Contact[]
+        );
+
+        toast.success("Contact updated successfully!");
       }
     } catch (error) {
       console.log(error);
@@ -137,16 +171,20 @@ const Dashboard = () => {
 
         {/* Add Contact Button */}
         <Box width={{ base: "100%", md: "30%" }} ml={{ base: 0, md: 4 }}>
-          <AddContactDialog onSave={handleSaveContact}>
+          <ContactDialog onSave={handleSaveContact}>
             <Button colorScheme="teal" width="100%">
               <IoPersonAddSharp /> Add Contact
             </Button>
-          </AddContactDialog>
+          </ContactDialog>
         </Box>
       </Flex>
 
       {/* Contact Grid */}
-      <ContactGrid contacts={contacts} handleDelete={handleDelete} />
+      <ContactGrid
+        contacts={contacts}
+        handleDeleteContact={handleDelete}
+        handleUpdateContact={handleUpdateContact}
+      />
     </Flex>
   );
 };

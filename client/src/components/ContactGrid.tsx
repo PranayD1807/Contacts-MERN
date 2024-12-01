@@ -4,6 +4,7 @@ import { Avatar } from "./ui/avatar"; // Assuming you have a custom Avatar compo
 
 import { MdOutlineDelete, MdOutlineEdit } from "react-icons/md";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
+import ContactDialog from "./ContactDialog";
 interface Contact {
   id: string;
   contactName: string;
@@ -13,7 +14,13 @@ interface Contact {
 
 interface ContactGridProps {
   contacts: Contact[];
-  handleDelete: (contactId: string) => Promise<void>;
+  handleDeleteContact: (contactId: string) => Promise<void>;
+  handleUpdateContact: (values: {
+    name: string;
+    email: string;
+    phone: string;
+    contactId: string;
+  }) => Promise<void>;
 }
 
 // Function to generate random profile pictures
@@ -23,7 +30,8 @@ const getRandomImage = (): string => {
 
 const ContactGrid: React.FC<ContactGridProps> = ({
   contacts,
-  handleDelete,
+  handleDeleteContact: handleDeleteContact,
+  handleUpdateContact: handleUpdateContact,
 }) => {
   return (
     <Grid
@@ -86,19 +94,32 @@ const ContactGrid: React.FC<ContactGridProps> = ({
             )}
           </Box>
           <Flex direction="column" gap={2}>
-            {/* Edit button */}
-            <IconButton
-              aria-label="Delete"
-              key="delete"
-              variant="subtle"
-              rounded="full"
-              size="xs"
+            <ContactDialog
+              onSave={(values) =>
+                handleUpdateContact({ ...values, contactId: contact.id })
+              }
+              initialValues={{
+                name: contact.contactName,
+                email: contact.email,
+                phone: contact.mobileNumber,
+              }}
+              title="Update Contact"
             >
-              <MdOutlineEdit />
-            </IconButton>
+              <IconButton
+                aria-label="Delete"
+                key="delete"
+                variant="subtle"
+                rounded="full"
+                size="xs"
+              >
+                <MdOutlineEdit />
+              </IconButton>
+            </ContactDialog>
+            {/* Edit button */}
+
             {/* delete button */}
             <DeleteConfirmationDialog
-              onDelete={() => handleDelete(contact.id)}
+              onDelete={() => handleDeleteContact(contact.id)}
               itemName={contact.contactName}
             >
               <IconButton
