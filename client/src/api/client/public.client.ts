@@ -1,8 +1,12 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import queryString from "query-string";
 
-const localHostUrl = "http://127.0.0.1:8080/";
-const baseURL = `${localHostUrl}api/v1/`;
+const hostUrl = "https://contacts-mern-backend.vercel.app/";
+
+// https://contacts-mern-backend.vercel.app/
+// "http://127.0.0.1:8080/";
+
+const baseURL = `${hostUrl}api/v1/`;
 
 const publicClient = axios.create({
   baseURL,
