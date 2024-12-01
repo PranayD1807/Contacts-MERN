@@ -14,7 +14,7 @@ import {
 
 interface DeleteConfirmationDialogProps {
   children: ReactNode;
-  onDelete: () => void;
+  onDelete: () => Promise<void>;
   itemName: string;
 }
 
@@ -25,8 +25,8 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
 
-  const handleConfirmDelete = () => {
-    onDelete();
+  const handleConfirmDelete = async () => {
+    await onDelete();
     setOpen(false);
   };
 

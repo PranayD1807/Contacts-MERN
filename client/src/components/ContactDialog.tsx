@@ -41,7 +41,7 @@ const validateContact = (values: {
 
 interface AddContactDialogProps {
   children: ReactNode;
-  onSave: (values: { name: string; email: string; phone: string }) => void;
+  onSave: (values: { name: string; email: string; phone: string }) => Promise<void>;
   initialValues?: Partial<{ name: string; email: string; phone: string }>;
   title?: string;
 }
@@ -79,7 +79,7 @@ const ContactDialog: React.FC<AddContactDialogProps> = ({
               initialValues={formattedInitialValues}
               validate={validateContact}
               onSubmit={async (values, actions) => {
-                onSave(values);
+                await onSave(values);
                 setOpen(false);
                 actions.resetForm();
               }}
